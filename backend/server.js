@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import { User } from "./src/user.model.js";
 dotenv.config();
 
 const app = express();
@@ -15,87 +16,6 @@ mongoose
   })
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error(err));
-
-const userSchema = new mongoose.Schema(
-  {
-    clerkId: {
-      type: String,
-      unique: true,
-      index: true,
-    },
-    username: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      required: true,
-    },
-    fullname: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-    },
-    avatar: {
-      type: String,
-      default:
-        "https://res.cloudinary.com/dodjzv1tm/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1734628995/hand-drawn-anonymous-hacker-concept_23-2147897289_yhcv2s.jpg",
-    },
-    rank: {
-      type: Number,
-      default: 0,
-    },
-    totalSolved: {
-      type: Number,
-      default: 0,
-    },
-    score: {
-      type: Number,
-      default: 0,
-    },
-    problemSolved: {
-      type: [
-        {
-          problemId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Problem",
-            required: true,
-          },
-          solvedAt: {
-            type: Date,
-            default: Date.now,
-          },
-        },
-      ],
-      default: [],
-    },
-    friends: {
-      type: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-      ],
-      default: [],
-    },
-    streak: {
-      type: Number,
-      default: 0,
-    },
-  },
-  { timestamps: true }
-);
-
-const User = mongoose.model("User", userSchema);
 
 async function generateUniqueUsername(baseUsername) {
   let username = baseUsername.toLowerCase();
@@ -111,7 +31,7 @@ async function generateUniqueUsername(baseUsername) {
 
 app.post("/api/users", async (req, res) => {
   try {
-    console.log("Incoming Request Body:", req.body); // Debugging
+    console.log("Incoming Request Body:", req.body); 
 
     const { clerkId, email, fullname, avatar } = req.body;
     if (!email || !clerkId) {
